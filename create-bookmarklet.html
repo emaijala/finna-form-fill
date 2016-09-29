@@ -1,0 +1,100 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<script type="text/javascript" id="ac">
+function finnaFill() {
+  function add(rec) {
+    $('#acbackdrop').remove(); 
+    $('input[name=nimi]').val(rec.title);
+    if (typeof rec.nonPresenterAuthors !== 'undefined' && rec.nonPresenterAuthors.length) {
+      var a='';
+      $(rec.nonPresenterAuthors).each(function(i,v){
+        if (a) a+=' - '; a += v.name;
+      });
+      $('input[name=Tekija]').val(a);
+    } else {
+      $('input[name=Tekija]').val('');
+    }
+    $('input[name=Kustantaja]').val(typeof rec.publishers!=='undefined' && rec.publishers.length ? rec.publishers[0] : '');
+    $('input[name=painovuosi]').val(typeof rec.publicationDates !== 'undefined' && rec.publicationDates.length ? rec.publicationDates[0] : '');
+    $('input[name=painos]').val(typeof rec.edition !== 'undefined' && rec.edition ? rec.edition : '');
+    $('input[name=sivum]').val(typeof rec.physicalDescriptions !== 'undefined' && rec.physicalDescriptions.length ? rec.physicalDescriptions[0] : '');
+    $('input[name=hakusanat]').val(typeof rec.subjects!=='undefined' && rec.subjects.length ? rec.subjects.join('; ') : '');
+    $('textarea[name=muuta]').text(typeof rec.isbns!=='undefined' && rec.isbns.length ? 'ISBN: ' + rec.isbns.join(', ') : '');
+  };
+  function callback(){
+    var input = $('input[name=nimi]').val();
+    input = window.prompt('Anna hakuehto (esim. nimike tai ISBN-tunnus)',input);
+    if (input == null || input == '') return;
+    var progress = $('<div id="acprogress">Haetaan...</div>');
+    progress.attr('style', 'position:absolute;left:40%;top:10%;width:20%;border:1px solid black;background:#eee;padding:20px');
+    $('body').append(progress);
+    $.ajax('https://api.finna.fi/v1/search?type=title&field[]=nonPresenterAuthors&field[]=title&field[]=publishers&field[]=publicationDates&field[]=edition&field[]=physicalDescriptions&field[]=isbns&field[]=subjects',{
+      data: { lookfor: input },
+      dataType: 'jsonp',
+      success: function(data) {
+        if (data.resultCount == 0) { 
+          alert('Ei tuloksia'); 
+        }
+        else if (data.resultCount == 1) {
+          add(data.records[0]);    
+        } else {
+          var div = $('<div id="acmodal"/>');
+          div.attr('style', 'position:absolute;left:10%;width:80%;top:10%;height:80%;background:#fff;border: 1px solid black;overflow:auto;padding:10px');
+          var button = $("<button onclick=\"$('#acbackdrop').remove();\">Peruuta</button>").attr('style','padding:5px;margin:10px 0 10px 0');
+          div.append(button);
+          var table = $('<table/>').appendTo(div);
+          table.click(function(){return false;});
+          table.append('<thead><tr><th>Nimike</th><th>Tekijä</th><th>Kustantaja</th><th>Painovuosi</th><th>Painos</th><th>Sivumäärä</th><th>ISBN</th></tr></thead>');
+          table.find('th').css('text-align','left');
+          var tb = $('<tbody/>').appendTo(table);
+          $.each(data.records,function(i,rec){
+            var row = $('<tr/>');
+            if (i%2) row.css('background','#eee');
+            var link = $('<a href="#"/>').click(function(){add(rec);return false;}).text(rec.title);
+            var title = $('<td/>').append(link);
+            row.append(title);
+            row.append($('<td/>').text((typeof rec.nonPresenterAuthors !== 'undefined' && rec.nonPresenterAuthors.length) ? rec.nonPresenterAuthors[0].name : '-'));
+            row.append($('<td/>').text((typeof rec.publishers !== 'undefined' && rec.publishers.length) ? rec.publishers[0] : '-'));
+            row.append($('<td/>').text((typeof rec.publicationDates !== 'undefined' && rec.publicationDates.length) ? rec.publicationDates[0] : '-'));
+            row.append($('<td/>').text((typeof rec.edition !== 'undefined' && rec.edition) ? rec.edition : '-'));
+            row.append($('<td/>').text((typeof rec.physicalDescriptions !== 'undefined' && rec.physicalDescriptions.length) ? rec.physicalDescriptions[0] : '-'));
+            row.append($('<td/>').text((typeof rec.isbns !== 'undefined' && rec.isbns.length) ? rec.isbns.join(', ') : '-'));
+            tb.append(row);
+          });
+          div.append(button.clone());
+          
+          var backdrop = $('<div id="acbackdrop"/>');
+          backdrop.attr('style', 'position:absolute;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5)');
+          backdrop.click(function(){$('#acbackdrop').remove();});
+          backdrop.append(div);
+          $('body').append(backdrop);
+        }
+      },
+      complete:function(){$('#acprogress').remove();}
+    });
+  };
+  if (typeof jQuery=='undefined'){
+    var s=document.createElement("script");s.src="https://code.jquery.com/jquery-2.2.4.min.js";if(s.addEventListener){s.addEventListener("load",callback,false)}else if(s.readyState){s.onreadystatechange=callback}document.body.appendChild(s);
+  } else {callback();}
+}
+</script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script type="text/javascript">
+function createBookmarklet() {
+  var src = $('script#ac').text();
+  lines = src.split(/[\n*\r*]/);
+  var cnt = lines.length;
+  for (var i = 0; i < cnt; i++) {
+    lines[i] = $.trim(lines[i]); //.replace(/\s*([\(\)\{\}\?\:]|&&|==|\!==|=)\s*/g, "$1");
+  }
+  src = lines.join('');
+  var script = src + 'finnaFill();'//(function(){' + src + '})()';
+  $('#placeholder').attr('href', 'javascript:' + encodeURIComponent(script));
+}
+</script>
+</head>
+<body onload="createBookmarklet();">
+Lisää tämä linkki kirjanmerkkeihin: <a id="placeholder">Hae tiedot</a>. Sen valitsemalla voit täydentää tiedot selaimessa auki olevalle lomakkeelle. Helpointa toimintoa on käyttää, kun linkin lisää selaimen kirjanmerkkipalkkiin, jota voi pitää aina näkyvillä.
+</body>
+</html>
