@@ -22,7 +22,7 @@ function finnaFill() {
     $('input[name=hakusanat]').val(typeof rec.subjects!=='undefined' && rec.subjects.length ? rec.subjects.join('; ') : '');
     $('textarea[name=muuta]').text(typeof rec.isbns!=='undefined' && rec.isbns.length ? 'ISBN: ' + rec.isbns.join(', ') : '');
   };
-  function callback(){
+  function callback() {
     var input = $('input[name=nimi]').val();
     input = window.prompt('Anna hakuehto (esim. nimike tai ISBN-tunnus)',input);
     if (input == null || input == '') return;
@@ -71,31 +71,44 @@ function finnaFill() {
           $('body').append(backdrop);
         }
       },
-      complete:function(){$('#acprogress').remove();}
+      complete: function() {
+        $('#acprogress').remove();
+      }
     });
   };
-  if (typeof jQuery=='undefined'){
-    var s=document.createElement("script");s.src="https://code.jquery.com/jquery-2.2.4.min.js";if(s.addEventListener){s.addEventListener("load",callback,false)}else if(s.readyState){s.onreadystatechange=callback}document.body.appendChild(s);
-  } else {callback();}
+  if (typeof jQuery == 'undefined') {
+    var s=document.createElement('script');
+    s.src = 'https://code.jquery.com/jquery-1.12.4.min.js';
+    if (s.addEventListener) { 
+        s.addEventListener('load', callback, false);
+    }
+    else if (s.readyState) { 
+      s.onreadystatechange = callback;
+    }
+    document.body.appendChild(s);
+  } else {
+    callback();
+  }
 }
 </script>
-<script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.4.min.js" integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 function createBookmarklet() {
   var src = $('script#ac').text();
   lines = src.split(/[\n*\r*]/);
   var cnt = lines.length;
   for (var i = 0; i < cnt; i++) {
-    lines[i] = $.trim(lines[i]); //.replace(/\s*([\(\)\{\}\?\:]|&&|==|\!==|=)\s*/g, "$1");
+    lines[i] = $.trim(lines[i]).replace(/\s*([\(\)\{\}\?\:]|&&|==|\!==|=)\s*/g, "$1");
   }
   src = lines.join('');
-  var script = src + 'finnaFill();'//(function(){' + src + '})()';
+  var script = src + 'finnaFill();'
   $('#placeholder').attr('href', 'javascript:' + encodeURIComponent(script));
 }
 </script>
 </head>
 <body onload="createBookmarklet();">
 <p>Lisää tämä linkki kirjanmerkkeihin: <a id="placeholder">Hae Finnasta</a>. Sen valitsemalla voit täydentää tiedot selaimessa auki olevalle lomakkeelle. Helpointa toimintoa on käyttää, kun linkin lisää selaimen kirjanmerkkipalkkiin, jota voi pitää aina näkyvillä.</p>
-<p>Jos kirjanmerkkipalkki on selaimessasi näkyvissä, voit raahata Hae tiedot -linkin haluaamasi kirjanmerkkipalkin kohtaan.
+<p>Jos kirjanmerkkipalkki on selaimessasi näkyvissä, voit raahata Hae tiedot -linkin haluaamasi kirjanmerkkipalkin kohtaan.</p>
+<p>Tämä toiminto on testattu toimivaksi Firefoxissa ja Chromessa.</p>
 </body>
 </html>
