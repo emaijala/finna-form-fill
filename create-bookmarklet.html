@@ -29,7 +29,7 @@ function finnaFill() {
     var progress = $('<div id="acprogress">Haetaan...</div>');
     progress.attr('style', 'position:absolute;left:40%;top:10%;width:20%;border:1px solid black;background:#eee;padding:20px');
     $('body').append(progress);
-    $.ajax('https://api.finna.fi/v1/search?type=title&field[]=nonPresenterAuthors&field[]=title&field[]=publishers&field[]=publicationDates&field[]=edition&field[]=physicalDescriptions&field[]=isbns&field[]=subjects',{
+    $.ajax('https://api.finna.fi/v1/search?type=title&field[]=nonPresenterAuthors&field[]=title&field[]=publishers&field[]=publicationDates&field[]=edition&field[]=physicalDescriptions&field[]=isbns&field[]=subjects&filter[]=~format%3A"0%2FJournal%2F"&filter[]=~format%3A"0%2FBook%2F"&filter[]=~format%3A"0%2FMap%2F"',{
       data: { lookfor: input },
       dataType: 'jsonp',
       success: function(data) {
@@ -95,6 +95,7 @@ function createBookmarklet() {
 </script>
 </head>
 <body onload="createBookmarklet();">
-Lisää tämä linkki kirjanmerkkeihin: <a id="placeholder">Hae tiedot</a>. Sen valitsemalla voit täydentää tiedot selaimessa auki olevalle lomakkeelle. Helpointa toimintoa on käyttää, kun linkin lisää selaimen kirjanmerkkipalkkiin, jota voi pitää aina näkyvillä.
+<p>Lisää tämä linkki kirjanmerkkeihin: <a id="placeholder">Hae Finnasta</a>. Sen valitsemalla voit täydentää tiedot selaimessa auki olevalle lomakkeelle. Helpointa toimintoa on käyttää, kun linkin lisää selaimen kirjanmerkkipalkkiin, jota voi pitää aina näkyvillä.</p>
+<p>Jos kirjanmerkkipalkki on selaimessasi näkyvissä, voit raahata Hae tiedot -linkin haluaamasi kirjanmerkkipalkin kohtaan.
 </body>
 </html>
