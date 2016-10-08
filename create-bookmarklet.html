@@ -8,19 +8,19 @@ function finnaFill() {
     $('input[name=nimi]').val(rec.title);
     if (typeof rec.nonPresenterAuthors !== 'undefined' && rec.nonPresenterAuthors.length) {
       var a='';
-      $(rec.nonPresenterAuthors).each(function(i,v){
+      $(rec.nonPresenterAuthors).each(function(i, v) {
         if (a) a+=' - '; a += v.name;
       });
       $('input[name=Tekija]').val(a);
     } else {
       $('input[name=Tekija]').val('');
     }
-    $('input[name=Kustantaja]').val(typeof rec.publishers!=='undefined' && rec.publishers.length ? rec.publishers[0] : '');
+    $('input[name=Kustantaja]').val(typeof rec.publishers !== 'undefined' && rec.publishers.length ? rec.publishers[0] : '');
     $('input[name=painovuosi]').val(typeof rec.publicationDates !== 'undefined' && rec.publicationDates.length ? rec.publicationDates[0] : '');
     $('input[name=painos]').val(typeof rec.edition !== 'undefined' && rec.edition ? rec.edition : '');
     $('input[name=sivum]').val(typeof rec.physicalDescriptions !== 'undefined' && rec.physicalDescriptions.length ? rec.physicalDescriptions[0] : '');
-    $('input[name=hakusanat]').val(typeof rec.subjects!=='undefined' && rec.subjects.length ? rec.subjects.join('; ') : '');
-    $('textarea[name=muuta]').text(typeof rec.isbns!=='undefined' && rec.isbns.length ? 'ISBN: ' + rec.isbns.join(', ') : '');
+    $('input[name=hakusanat]').val(typeof rec.subjects !== 'undefined' && rec.subjects.length ? rec.subjects.join('; ') : '');
+    $('input[name=isbn]').val(typeof rec.isbns !== 'undefined' && rec.isbns.length ? rec.isbns.join(', ') : '');
   };
   function callback() {
     var input = $('input[name=nimi]').val();
