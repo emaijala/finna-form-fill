@@ -4,7 +4,7 @@
 <script type="text/javascript" id="ac">
 function finnaFill() {
   function add(rec) {
-    $('#acbackdrop').remove(); 
+    $('#acbackdrop').remove();
     $('input[name=nimi]').val(rec.title);
     if (typeof rec.nonPresenterAuthors !== 'undefined' && rec.nonPresenterAuthors.length) {
       var a='';
@@ -29,15 +29,15 @@ function finnaFill() {
     var progress = $('<div id="acprogress">Haetaan...</div>');
     progress.attr('style', 'position:absolute;left:40%;top:10%;width:20%;border:1px solid black;background:#eee;padding:20px');
     $('body').append(progress);
-    $.ajax('https://api.finna.fi/v1/search?type=title&field[]=nonPresenterAuthors&field[]=title&field[]=publishers&field[]=publicationDates&field[]=edition&field[]=physicalDescriptions&field[]=isbns&field[]=subjects&filter[]=~format%3A"0%2FJournal%2F"&filter[]=~format%3A"0%2FBook%2F"&filter[]=~format%3A"0%2FMap%2F"',{
+    $.ajax('https://api.finna.fi/v1/search?field[]=nonPresenterAuthors&field[]=title&field[]=publishers&field[]=publicationDates&field[]=edition&field[]=physicalDescriptions&field[]=isbns&field[]=subjects&filter[]=~format%3A"0%2FJournal%2F"&filter[]=~format%3A"0%2FBook%2F"&filter[]=~format%3A"0%2FMap%2F"',{
       data: { lookfor: input },
       dataType: 'jsonp',
       success: function(data) {
-        if (data.resultCount == 0) { 
-          alert('Ei tuloksia'); 
+        if (data.resultCount == 0) {
+          alert('Ei tuloksia');
         }
         else if (data.resultCount == 1) {
-          add(data.records[0]);    
+          add(data.records[0]);
         } else {
           var div = $('<div id="acmodal"/>');
           div.attr('style', 'position:absolute;left:10%;width:80%;top:10%;height:80%;background:#fff;border: 1px solid black;overflow:auto;padding:10px');
@@ -63,7 +63,7 @@ function finnaFill() {
             tb.append(row);
           });
           div.append(button.clone());
-          
+
           var backdrop = $('<div id="acbackdrop"/>');
           backdrop.attr('style', 'position:absolute;left:0;top:0;width:100%;height:100%;background:rgba(0,0,0,0.5)');
           backdrop.click(function(){$('#acbackdrop').remove();});
@@ -79,10 +79,10 @@ function finnaFill() {
   if (typeof jQuery == 'undefined') {
     var s=document.createElement('script');
     s.src = 'https://code.jquery.com/jquery-1.12.4.min.js';
-    if (s.addEventListener) { 
+    if (s.addEventListener) {
         s.addEventListener('load', callback, false);
     }
-    else if (s.readyState) { 
+    else if (s.readyState) {
       s.onreadystatechange = callback;
     }
     document.body.appendChild(s);
